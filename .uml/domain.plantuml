@@ -1,0 +1,126 @@
+@startuml
+
+class TravelPackage {
+    type: TravelPackageType
+    totalDiscount: Integer
+}
+
+
+enum TravelPackageType {
+    PACKAGE
+    SIMPLE
+}
+
+
+TravelPackageType .r.. TravelPackage::type
+
+
+class Payment {
+    value: Integer
+    status: PayStatus
+}
+
+enum PayStatus {
+    PENDING
+    PAY
+    CANCEL
+    CONFIRM
+}
+
+PayStatus .r.. Payment::status
+
+
+class Reservation {
+    createTime: Date
+    expireTime: Date
+    status: ReservationStatus
+    payValue: Integer
+    code: String
+    city: String
+    province: String
+    country: String
+}
+
+enum ReservationStatus {
+    PENDING
+    CONFIRM
+}
+
+ReservationStatus .r.. Reservation::status
+
+
+class HotelReservation {
+    type: HotelReservationType
+    incomeTime: Date
+    exitTime: Date
+    room: String
+
+}
+
+enum HotelReservationType {
+    SIMPLE
+    DOUBLE
+    PENTHOUSE
+}
+
+
+HotelReservationType ... HotelReservation::type
+
+
+class TravelReservation {
+    travelDate: Date
+    type: TravelReservationType
+    planeName: String
+    chair: String
+    door: String
+}
+
+enum TravelReservationType {
+    GOING
+    LAP
+}
+
+
+TravelReservation::type .d. TravelReservationType
+
+
+class TravelUser {
+    firstName: String
+    lastName: String
+    birthDate: Date
+    identification: String
+    typeIdentification: String
+    passport: String
+    phone: String
+    email: String
+}
+
+class Discount {
+    type: String
+    percentage: Float
+}
+
+HotelReservation ---|> Reservation : Could be
+TravelReservation --|> Reservation : Could be
+
+
+Reservation  "HotelReservation 1.*" ----o "1" TravelPackage: Include
+Reservation  "1.* TravelReservation"----o "1" TravelPackage: Include
+
+
+TravelUser "1.*" -l-* "1" Reservation : "Reserve"
+
+Payment "1" --* "1.*" Reservation : "Confirm"
+Payment "1" -l--* "1" TravelUser : "Pay"
+
+TravelPackage "1" *-l-- "1" TravelUser : "Consultation"
+Reservation "1.*" *--r-- "1.*" Discount : "Decreases"
+
+
+
+
+
+
+
+
+@enduml
